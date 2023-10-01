@@ -1,0 +1,15 @@
+@import '../../variables.css';
+
+.btn {
+    height: 36px;
+    min-width: 300px;
+    padding: 0 16px;
+    border-radius: 4px;
+    outline: 0;
+    border-style: none;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    border-radius: 8px;
+    font-size: var(--base-font-size);
+    color: var(--font-color);
+}
