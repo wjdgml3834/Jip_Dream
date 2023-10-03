@@ -1,34 +1,62 @@
-const $hiddenImageFileInput = document.getElementById('hiddenImageFileInput');
-const $imageContainer = document.querySelector('.image-container');
-const $galleryThumbnail = document.querySelector('.gallery-thumbnail');
+const SELECTORS = {
+    hiddenImageFileInput: 'hiddenImageFileInput',
+    imageContainer: '.image-container',
+    galleryThumbnail: '.gallery-thumbnail',
+};
+
+const $hiddenImageFileInput = document.getElementById(SELECTORS.hiddenImageFileInput);
+const $imageContainer = document.querySelector(SELECTORS.imageContainer);
+const $galleryThumbnail = document.querySelector(SELECTORS.galleryThumbnail);
+const $previewImage = createPreviewImageElement();
 
 let hasUploadedBefore = false;
-const previewImage = document.createElement('img');
-previewImage.setAttribute('id', 'previewImage');
+
+function createPreviewImageElement() {
+    const imageElement = document.createElement('img');
+    imageElement.setAttribute('id', 'previewImage');
+    return imageElement;
+}
 
 $imageContainer.addEventListener('click', function () {
     $hiddenImageFileInput.click();
 });
 
-$hiddenImageFileInput.addEventListener('change', function () {
-    const file = this.files[0];
+function removeThumbnail() {
+    $galleryThumbnail.parentNode.removeChild($galleryThumbnail);
+}
 
-    if (file && file.type.startsWith('image/')) {
-        if (hasUploadedBefore === false) {
-            $galleryThumbnail.parentNode.removeChild($galleryThumbnail);
-            hasUploadedBefore = true;
+function handleInitialImageUpload() {
+    if (hasUploadedBefore) return;
+    removeThumbnail();
+    hasUploadedBefore = true;
+}
+
+function handleImagePreview(file) {
+    $imageContainer.appendChild($previewImage);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        $previewImage.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function updateImagePreview(file) {
+    try {
+        if (!file?.type?.startsWith('image/')) {
+            throw new Error('Selected file is not an image.');
         }
-
-        $imageContainer.appendChild(previewImage);
-
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-            previewImage.src = event.target.result;
-        };
-
-        reader.readAsDataURL(file);
-    } else {
-        previewImage.src = '';
+    } catch (error) {
+        $previewImage.src = '';
+        alert(error.message);
     }
-});
+    handleInitialImageUpload();
+    handleImagePreview(file);
+}
+
+function handleImageFileSelection() {
+    const file = this.files[0];
+    updateImagePreview(file);
+}
+
+$hiddenImageFileInput.addEventListener('change', handleImageFileSelection);
