@@ -43,14 +43,19 @@ function handleImagePreview(file) {
     reader.readAsDataURL(file);
 }
 
+function isValidImage(file) {
+    return file?.type?.startsWith('image/');
+}
+
+function displayError(message) {
+    $previewImage.src = '';
+    alert(message);
+}
+
 function updateImagePreview(file) {
-    try {
-        if (!file?.type?.startsWith('image/')) {
-            throw new Error('Selected file is not an image.');
-        }
-    } catch (error) {
-        $previewImage.src = '';
-        alert(error.message);
+    if (!isValidImage(file)) {
+        displayError('Selected file is not an image.');
+        return;
     }
     handleInitialImageUpload();
     handleImagePreview(file);
