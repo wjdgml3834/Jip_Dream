@@ -9,7 +9,15 @@ const $imageContainer = document.querySelector(SELECTORS.imageContainer);
 const $galleryThumbnail = document.querySelector(SELECTORS.galleryThumbnail);
 const $previewImage = createPreviewImageElement();
 
-let hasUploadedBefore = false;
+const handleInitialImageUpload = (() => {
+    let hasUploadedBefore = false;
+
+    return () => {
+        if (hasUploadedBefore) return;
+        removeThumbnail();
+        hasUploadedBefore = true;
+    };
+})();
 
 function createPreviewImageElement() {
     const imageElement = document.createElement('img');
@@ -23,12 +31,6 @@ $imageContainer.addEventListener('click', function () {
 
 function removeThumbnail() {
     $galleryThumbnail.parentNode.removeChild($galleryThumbnail);
-}
-
-function handleInitialImageUpload() {
-    if (hasUploadedBefore) return;
-    removeThumbnail();
-    hasUploadedBefore = true;
 }
 
 function handleImagePreview(file) {
