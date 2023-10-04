@@ -1,10 +1,10 @@
 const SELECTORS = {
-    hiddenImageFileInput: 'hiddenImageFileInput',
+    hiddenImageFileInput: '#hiddenImageFileInput',
     imageContainer: '.image-container',
     galleryThumbnail: '.gallery-thumbnail',
 };
 
-const $hiddenImageFileInput = document.getElementById(SELECTORS.hiddenImageFileInput);
+const $hiddenImageFileInput = document.querySelector(SELECTORS.hiddenImageFileInput);
 const $imageContainer = document.querySelector(SELECTORS.imageContainer);
 const $galleryThumbnail = document.querySelector(SELECTORS.galleryThumbnail);
 const $previewImage = createPreviewImageElement();
@@ -24,10 +24,6 @@ function createPreviewImageElement() {
     imageElement.setAttribute('id', 'previewImage');
     return imageElement;
 }
-
-$imageContainer.addEventListener('click', function () {
-    $hiddenImageFileInput.click();
-});
 
 function removeThumbnail() {
     $galleryThumbnail.parentNode.removeChild($galleryThumbnail);
@@ -66,4 +62,22 @@ function handleImageFileSelection() {
     updateImagePreview(file);
 }
 
-$hiddenImageFileInput.addEventListener('change', handleImageFileSelection);
+const eventListenersMap = {
+    [SELECTORS.imageContainer]: {
+        event: 'click',
+        handler: () => $hiddenImageFileInput.click(),
+    },
+    [SELECTORS.hiddenImageFileInput]: {
+        event: 'change',
+        handler: handleImageFileSelection,
+    },
+};
+
+function bindEventListeners(eventListenersMap) {
+    for (let selector in eventListenersMap) {
+        const element = document.querySelector(selector);
+        element?.addEventListener(eventListenersMap[selector].event, eventListenersMap[selector].handler);
+    }
+}
+
+bindEventListeners(eventListenersMap);
