@@ -2,12 +2,14 @@ const SELECTORS = {
     hiddenImageFileInput: '#hiddenImageFileInput',
     imageContainer: '.image-container',
     galleryThumbnail: '.gallery-thumbnail',
+    imageUploadButton: '.upload-button',
 };
 
 const $hiddenImageFileInput = document.querySelector(SELECTORS.hiddenImageFileInput);
 const $imageContainer = document.querySelector(SELECTORS.imageContainer);
 const $galleryThumbnail = document.querySelector(SELECTORS.galleryThumbnail);
 const $previewImage = createPreviewImageElement();
+const $imageUploadButton = document.querySelector(SELECTORS.imageUploadButton);
 
 const handleInitialImageUpload = (() => {
     let hasUploadedBefore = false;
@@ -55,11 +57,23 @@ function updateImagePreview(file) {
     }
     handleInitialImageUpload();
     handleImagePreview(file);
+    $imageUploadButton.addEventListener('click', handleUploadButton(file));
 }
 
 function handleImageFileSelection() {
     const file = this.files[0];
     updateImagePreview(file);
+}
+
+function handleUploadButton(file) {
+    if (!file?.type?.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const base64String = event.target.result;
+        localStorage.setItem('savedImage', base64String);
+    };
+
+    reader.readAsDataURL(file);
 }
 
 const eventListenersMap = {
@@ -70,6 +84,10 @@ const eventListenersMap = {
     [SELECTORS.hiddenImageFileInput]: {
         event: 'change',
         handler: handleImageFileSelection,
+    },
+    [SELECTORS.imageUploadButton]: {
+        event: 'click',
+        handler: handleUploadButton,
     },
 };
 

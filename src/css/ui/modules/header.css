@@ -1,0 +1,15 @@
+.header {
+    display: flex;
+    min-width: 340px;
+    margin-top: 47px;
+}
+
+.title {
+    margin: 0 auto;
+}
+
+.filter-button {
+    /* margin-left: 44px; */
+    width: 30px;
+    height: 17px;
+}
